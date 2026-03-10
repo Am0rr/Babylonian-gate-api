@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { StatsBanner } from './components/StatsBanner';
 import { SearchBar } from './components/SearchBar';
+import { InventoryTable } from './components/InventoryTable';
 import type { DashboardStats } from './types/types';
 
 const initialStats: DashboardStats = {
@@ -35,13 +36,15 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#050505] text-white font-mono">
+    <div className="flex h-screen bg-[#050505] text-white font-mono overflow-hidden">
       
       <Sidebar />
+
       
-      <div className="flex-1 flex flex-col relative overflow-hidden">
+      <div className="flex-1 flex flex-col relative h-full">
         
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 flex flex-col p-8 min-h-0">
+          <div className="shrink-0">
             <StatsBanner 
               stats={stats} 
               isLoading={isLoading} 
@@ -52,10 +55,10 @@ function App() {
               value={searchQuery} 
               onChange={handleSearch} 
             />
+          </div>
 
-            <div className="mt-8 border border-dashed border-white/10 rounded h-96 flex items-center justify-center text-gray-600 uppercase tracking-widest text-sm">
-                Inventory Table Area <br/>
-                (Filter: {searchQuery || "None"})
+            <div className="flex-1 min-h-0 pb-4">
+                <InventoryTable />
             </div>
         </main>
       </div>
