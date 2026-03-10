@@ -60,15 +60,15 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-72 bg-[#050505] border-r border-white/10 flex flex-col h-screen font-mono select-none">
+    <aside className="w-78 bg-[#050505] border-r border-white/10 flex flex-col h-screen font-mono select-none">
       
-      <div className="h-16 flex items-center px-6 border-b border-white/5">
-        <div className="w-10 h-10 bg-emerald-500/10 rounded flex items-center justify-center mr-3 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+      <div className="h-20 flex items-center px-6 border-b border-white/5">
+        <div className="w-10 h-10 shrink-0 bg-emerald-500/10 rounded flex items-center justify-center mr-3 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
           <Box className="text-emerald-500" size={25} />
         </div>
         <div>
-            <h1 className="font-bold text-white tracking-wider text-[24px]">ARMORY WMS</h1>
-            <p className="text-[10px] text-gray-600 font-medium tracking-widest uppercase">System Ver. 1.0</p>
+            <h1 className="font-bold text-white tracking-wider text-[20px] uppercase">Babylonian Gate</h1>
+            <p className="text-[11px] text-emerald-300 font-medium tracking-widest uppercase whitespace-nowrap">Armory Warehouse Managment</p>
         </div>
       </div>
 
