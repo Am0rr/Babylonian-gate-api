@@ -4,11 +4,11 @@ services:
   postgres_db:
     image: postgres:16-alpine 
     container_name: babylonian_db
-    restart: always 
+    restart: no 
     
     environment:
-      POSTGRES_USER: Top
-      POSTGRES_PASSWORD: 141713
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: BabylonianGateDb
     
     ports:
