@@ -3,8 +3,21 @@ using FluentValidation.AspNetCore;
 using BG.App;
 using BG.Api.Middleware;
 using System.Text.Json.Serialization;
+using DotNetEnv;
+using BG.Infra.Persistence;
+using Microsoft.EntityFrameworkCore;
+
+Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = $"Host={Env.GetString("DB_HOST", "localhost")};" +
+                       $"Port={Env.GetString("DB_PORT", "5432")};" +
+                       $"Database={Env.GetString("DB_NAME", "BabylonianGateDb")};" +
+                       $"Username={Env.GetString("DB_USER", "postgres")};" +
+                       $"Password={Env.GetString("DB_PASSWORD")};";
+
+builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -24,14 +37,26 @@ var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<BabylonianDbContext>();
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        logger.LogInformation("Starting database migration...");
+        await context.Database.MigrateAsync();
+        logger.LogInformation("Database migrated successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogCritical(ex, "An error occurred while migrating the database.");
+        throw;
+    }
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
