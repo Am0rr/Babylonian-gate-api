@@ -24,7 +24,7 @@ public class WeaponService : BaseService, IWeaponService
 
         var type = Enum.Parse<WeaponType>(request.Type, ignoreCase: true);
 
-        var weapon = Weapon.Create(
+        var weapon = new Weapon(
             request.CodeName,
             request.SerialNumber,
             request.Caliber,

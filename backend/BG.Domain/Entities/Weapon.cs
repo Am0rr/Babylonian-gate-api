@@ -14,7 +14,7 @@ public class Weapon : BaseEntity
 
     protected Weapon() { }
 
-    private Weapon(string codeName, string serialNumber, string caliber, WeaponType type)
+    public Weapon(string codeName, string serialNumber, string caliber, WeaponType type)
     {
         Codename = codeName;
         SerialNumber = serialNumber;
@@ -22,18 +22,6 @@ public class Weapon : BaseEntity
         Caliber = caliber;
         Condition = 100.0;
         Status = WeaponStatus.InStorage;
-    }
-
-    public static Weapon Create(string codeName, string serialNumber, string caliber, WeaponType type)
-    {
-        if (string.IsNullOrWhiteSpace(serialNumber))
-            throw new ArgumentException("Serial Number is required", nameof(serialNumber));
-        if (string.IsNullOrWhiteSpace(codeName))
-            throw new ArgumentException("Code Name is required", nameof(codeName));
-        if (string.IsNullOrWhiteSpace(caliber))
-            throw new ArgumentException("Caliber is required", nameof(caliber));
-
-        return new Weapon(codeName, serialNumber, caliber, type);
     }
 
     public void ApplyWear(int roundsFired)
