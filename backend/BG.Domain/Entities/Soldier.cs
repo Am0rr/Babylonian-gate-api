@@ -19,11 +19,6 @@ public class Soldier : BaseEntity
 
     public void UpdateName(string firstName, string lastName)
     {
-        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
-        {
-            throw new ArgumentException("Fist/Last Name cannot be empty.");
-        }
-
         FirstName = firstName;
         LastName = lastName;
     }
