@@ -6,17 +6,22 @@ using BG.Domain.Entities;
 
 namespace BG.App.Services;
 
-public class AmmoService : IAmmoService
+public class AmmoService : BaseService, IAmmoService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public AmmoService(IUnitOfWork unitOfWork)
+    public AmmoService(
+        IUnitOfWork unitOfWork,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
         _unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> CreateAsync(CreateAmmoRequest request)
     {
+        Validate(request);
+
         var type = Enum.Parse<AmmoType>(request.Type, ignoreCase: true);
 
         var crate = AmmoCrate.Create(
@@ -62,6 +67,8 @@ public class AmmoService : IAmmoService
 
     public async Task UpdateDetailsAsync(UpdateAmmoDetailsRequest request)
     {
+        Validate(request);
+
         var crate = await _unitOfWork.Crates.GetByIdAsync(request.Id);
 
         if (crate is null)
@@ -113,6 +120,8 @@ public class AmmoService : IAmmoService
 
     public async Task IssueAmmoAsync(IssueAmmoRequest request)
     {
+        Validate(request);
+
         var crate = await _unitOfWork.Crates.GetByIdAsync(request.CrateId);
 
         if (crate is null)
@@ -143,6 +152,8 @@ public class AmmoService : IAmmoService
 
     public async Task RestockAsync(RestockAmmoRequest request)
     {
+        Validate(request);
+
         var crate = await _unitOfWork.Crates.GetByIdAsync(request.CrateId);
 
         if (crate is null)
@@ -173,6 +184,8 @@ public class AmmoService : IAmmoService
 
     public async Task AuditInventoryAsync(AuditAmmoInventoryRequest request)
     {
+        Validate(request);
+
         var crate = await _unitOfWork.Crates.GetByIdAsync(request.CrateId);
 
         if (crate is null)

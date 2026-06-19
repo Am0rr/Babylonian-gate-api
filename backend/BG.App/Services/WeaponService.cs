@@ -6,17 +6,22 @@ using BG.Domain.Interfaces;
 
 namespace BG.App.Services;
 
-public class WeaponService : IWeaponService
+public class WeaponService : BaseService, IWeaponService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public WeaponService(IUnitOfWork unitOfWork)
+    public WeaponService(
+        IUnitOfWork unitOfWork,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
         _unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> CreateAsync(CreateWeaponRequest request)
     {
+        Validate(request);
+
         var type = Enum.Parse<WeaponType>(request.Type, ignoreCase: true);
 
         var weapon = Weapon.Create(
@@ -61,6 +66,8 @@ public class WeaponService : IWeaponService
 
     public async Task UpdateDetailsAsync(UpdateWeaponDetailsRequest request)
     {
+        Validate(request);
+
         var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.Id);
 
         if (weapon is null)
@@ -112,6 +119,8 @@ public class WeaponService : IWeaponService
 
     public async Task IssueWeaponAsync(IssueWeaponRequest request)
     {
+        Validate(request);
+
         var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
 
         if (weapon is null)
@@ -139,6 +148,8 @@ public class WeaponService : IWeaponService
 
     public async Task ReturnToStorageAsync(ReturnWeaponToStorageRequest request)
     {
+        Validate(request);
+
         var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
 
         if (weapon is null)
@@ -161,6 +172,8 @@ public class WeaponService : IWeaponService
 
     public async Task SendToMaintenanceAsync(SendWeaponToMaintenanceRequest request)
     {
+        Validate(request);
+
         var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
 
         if (weapon is null)
@@ -180,6 +193,8 @@ public class WeaponService : IWeaponService
 
     public async Task ReportMissingAsync(ReportWeaponMissingRequest request)
     {
+        Validate(request);
+
         var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
 
         if (weapon is null)

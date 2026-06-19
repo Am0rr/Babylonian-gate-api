@@ -6,17 +6,22 @@ using BG.Domain.Enums;
 
 namespace BG.App.Services;
 
-public class SoldierService : ISoldierService
+public class SoldierService : BaseService, ISoldierService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public SoldierService(IUnitOfWork unitOfWork)
+    public SoldierService(
+        IUnitOfWork unitOfWork,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
         _unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> CreateAsync(CreateSoldierRequest request)
     {
+        Validate(request);
+
         var rank = Enum.Parse<SoldierRank>(request.Rank, ignoreCase: true);
 
         var soldier = Soldier.Create(
@@ -37,6 +42,8 @@ public class SoldierService : ISoldierService
 
     public async Task UpdateAsync(UpdateSoldierRequest request)
     {
+        Validate(request);
+
         var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.Id);
 
         if (soldier is null)
