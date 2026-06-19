@@ -10,22 +10,11 @@ public class Soldier : BaseEntity
 
     protected Soldier() { }
 
-    private Soldier(string firstName, string lastName, SoldierRank rank)
+    public Soldier(string firstName, string lastName, SoldierRank rank)
     {
         FirstName = firstName;
         LastName = lastName;
         Rank = rank;
-    }
-
-    public static Soldier Create(string firstName, string lastName, SoldierRank rank)
-    {
-        if (string.IsNullOrWhiteSpace(firstName))
-            throw new ArgumentException("First Name is required", nameof(firstName));
-        if (string.IsNullOrWhiteSpace(lastName))
-            throw new ArgumentException("Last Name is required", nameof(lastName));
-
-
-        return new Soldier(firstName, lastName, rank);
     }
 
     public void UpdateName(string firstName, string lastName)

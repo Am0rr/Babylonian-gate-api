@@ -24,7 +24,7 @@ public class SoldierService : BaseService, ISoldierService
 
         var rank = Enum.Parse<SoldierRank>(request.Rank, ignoreCase: true);
 
-        var soldier = Soldier.Create(
+        var soldier = new Soldier(
             request.FirstName,
             request.LastName,
             rank
