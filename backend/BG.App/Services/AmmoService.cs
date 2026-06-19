@@ -24,7 +24,7 @@ public class AmmoService : BaseService, IAmmoService
 
         var type = Enum.Parse<AmmoType>(request.Type, ignoreCase: true);
 
-        var crate = AmmoCrate.Create(
+        var crate = new AmmoCrate(
             request.LotNumber,
             request.Caliber,
             request.Quantity,

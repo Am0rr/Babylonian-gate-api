@@ -11,26 +11,12 @@ public class AmmoCrate : BaseEntity
 
     protected AmmoCrate() { }
 
-    private AmmoCrate(string lotNumber, string caliber, int quantity, AmmoType type)
+    public AmmoCrate(string lotNumber, string caliber, int quantity, AmmoType type)
     {
         LotNumber = lotNumber;
         Caliber = caliber;
         Type = type;
         Quantity = quantity;
-    }
-
-    public static AmmoCrate Create(string lotNumber, string caliber, int quantity, AmmoType type)
-    {
-        if (string.IsNullOrWhiteSpace(lotNumber))
-            throw new ArgumentException("Lot Number is required.", nameof(lotNumber));
-
-        if (string.IsNullOrWhiteSpace(caliber))
-            throw new ArgumentException("Caliber is required.", nameof(caliber));
-
-        if (quantity < 0)
-            throw new ArgumentException("Ammo quantity cannot be negative.", nameof(quantity));
-
-        return new AmmoCrate(lotNumber, caliber, quantity, type);
     }
 
     public void Issue(int amount) => Quantity -= amount;
