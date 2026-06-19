@@ -1,20 +1,14 @@
-
-
-using BG.Domain.Common;
-
 namespace BG.Domain.Entities;
 
-public class OperationLog : Entity
+public class OperationLog : BaseEntity
 {
-    public string Action { get; private set; } = string.Empty;
-    public string Details { get; private set; } = string.Empty;
+    public string Action { get; private set; } = null!;
+    public string Details { get; private set; } = null!;
     public Guid? RelatedEntityId { get; private set; }
     public Guid? OperatorId { get; private set; }
 
-    private OperationLog()
-    {
+    protected OperationLog() { }
 
-    }
     private OperationLog(string action, string details, Guid? relatedEntityId, Guid? operatorId)
     {
         Action = action;

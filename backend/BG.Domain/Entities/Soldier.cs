@@ -1,21 +1,14 @@
-
-
-using System.Runtime.CompilerServices;
-using BG.Domain.Common;
 using BG.Domain.Enums;
 
 namespace BG.Domain.Entities;
 
-public class Soldier : Entity
+public class Soldier : BaseEntity
 {
-    public string FirstName { get; private set; } = string.Empty;
-    public string LastName { get; private set; } = string.Empty;
+    public string FirstName { get; private set; } = null!;
+    public string LastName { get; private set; } = null!;
     public SoldierRank Rank { get; private set; }
 
-    private Soldier()
-    {
-
-    }
+    protected Soldier() { }
 
     private Soldier(string firstName, string lastName, SoldierRank rank)
     {
@@ -46,8 +39,5 @@ public class Soldier : Entity
         LastName = lastName;
     }
 
-    public void UpdateRank(SoldierRank newRank)
-    {
-        Rank = newRank;
-    }
+    public void UpdateRank(SoldierRank newRank) => Rank = newRank;
 }

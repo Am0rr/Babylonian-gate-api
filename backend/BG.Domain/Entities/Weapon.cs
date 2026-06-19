@@ -1,22 +1,19 @@
 using BG.Domain.Enums;
-using BG.Domain.Common;
 
 namespace BG.Domain.Entities;
 
-public class Weapon : Entity
+public class Weapon : BaseEntity
 {
-    public string Codename { get; private set; } = string.Empty;
-    public string SerialNumber { get; private set; } = string.Empty;
-    public string Caliber { get; private set; } = string.Empty;
+    public string Codename { get; private set; } = null!;
+    public string SerialNumber { get; private set; } = null!;
+    public string Caliber { get; private set; } = null!;
     public WeaponType Type { get; private set; }
-
     public double Condition { get; private set; }
     public WeaponStatus Status { get; private set; }
-
     public Guid? IssuedToSoldierId { get; private set; }
-    private Weapon()
-    {
-    }
+
+    protected Weapon() { }
+
     private Weapon(string codeName, string serialNumber, string caliber, WeaponType type)
     {
         Codename = codeName;
@@ -52,48 +49,9 @@ public class Weapon : Entity
         Condition = Math.Max(0, Condition - damage);
     }
 
-    public void ChangeCodeName(string newCodeName)
-    {
-        if (string.IsNullOrWhiteSpace(newCodeName))
-        {
-            throw new ArgumentException("Code Name is invalid.");
-        }
-
-        EnsureEditable();
-
-        Codename = newCodeName;
-    }
-
-    public void CorrectSerialNumber(string fixedSerialNumber)
-    {
-        if (string.IsNullOrWhiteSpace(fixedSerialNumber))
-            throw new ArgumentException("Serial Number cannot be empty.");
-
-
-        EnsureEditable();
-
-        SerialNumber = fixedSerialNumber;
-    }
-
-    public void CorrectCaliber(string correctedCaliber)
-    {
-        if (string.IsNullOrWhiteSpace(correctedCaliber))
-        {
-            throw new ArgumentException("Caliber cannot be empty.");
-        }
-
-        EnsureEditable();
-
-        Caliber = correctedCaliber;
-    }
-
-    private void EnsureEditable()
-    {
-        if (Status != WeaponStatus.InStorage)
-        {
-            throw new InvalidOperationException($"Cannot edit weapon details while it is in status: {Status}. Return to storage first.");
-        }
-    }
+    public void ChangeCodeName(string newCodeName) => Codename = newCodeName;
+    public void CorrectSerialNumber(string fixedSerialNumber) => SerialNumber = fixedSerialNumber;
+    public void CorrectCaliber(string correctedCaliber) => Caliber = correctedCaliber;
 
     public void IssueTo(Guid soldierId)
     {
@@ -120,10 +78,7 @@ public class Weapon : Entity
         IssuedToSoldierId = null;
     }
 
-    public void MarkAsMissing()
-    {
-        Status = WeaponStatus.Missing;
-    }
+    public void MarkAsMissing() => Status = WeaponStatus.Missing;
 
     public void SendToMaintenance()
     {
