@@ -4,19 +4,23 @@ using BG.Domain.Interfaces;
 using BG.Domain.Entities;
 using BG.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace BG.App.Services;
 
 public class SoldierService : BaseService, ISoldierService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public SoldierService(
         IUnitOfWork unitOfWork,
+        IMapper mapper,
         IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<Guid> CreateAsync(CreateSoldierRequest request, CancellationToken cancellationToken)
@@ -102,28 +106,18 @@ public class SoldierService : BaseService, ISoldierService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<SoldierResponse?> GetSoldierByIdAsync(Guid soldierId, CancellationToken cancellationToken)
+    public async Task<SoldierResponse> GetSoldierByIdAsync(Guid soldierId, CancellationToken cancellationToken)
     {
         var soldier = await _unitOfWork.Soldiers.GetByIdAsync(soldierId, cancellationToken)
             ?? throw new KeyNotFoundException($"Soldier with ID {soldierId} not found.");
 
-        return MapToResponse(soldier);
+        return _mapper.Map<SoldierResponse>(soldier);
     }
 
-    public async Task<List<SoldierResponse>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<SoldierResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
         var soldiers = await _unitOfWork.Soldiers.GetAllAsync(cancellationToken);
 
-        return soldiers.Select(MapToResponse).ToList();
-    }
-
-    private static SoldierResponse MapToResponse(Soldier s)
-    {
-        return new SoldierResponse(
-            s.Id,
-            s.FirstName,
-            s.LastName,
-            s.Rank.ToString()
-        );
+        return _mapper.Map<IEnumerable<SoldierResponse>>(soldiers);
     }
 }

@@ -11,6 +11,6 @@ public interface IWeaponService
     Task ReturnToStorageAsync(ReturnWeaponToStorageRequest request, CancellationToken cancellationToken = default);
     Task SendToMaintenanceAsync(SendWeaponToMaintenanceRequest request, CancellationToken cancellationToken = default);
     Task ReportMissingAsync(ReportWeaponMissingRequest request, CancellationToken cancellationToken = default);
-    Task<WeaponResponse?> GetWeaponByIdAsync(Guid weaponId, CancellationToken cancellationToken = default);
-    Task<List<WeaponResponse>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<WeaponResponse> GetWeaponByIdAsync(Guid weaponId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<WeaponResponse>> GetAllAsync(CancellationToken cancellationToken = default);
 }

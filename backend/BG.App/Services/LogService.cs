@@ -1,3 +1,4 @@
+using AutoMapper;
 using BG.App.DTOs.OperationLogs;
 using BG.App.Interfaces;
 using BG.Domain.Entities;
@@ -8,43 +9,33 @@ namespace BG.App.Services;
 public class LogService : ILogService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public LogService(IUnitOfWork unitOfWork)
+    public LogService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<LogResponse?> GetLogByIdAsync(Guid logId, CancellationToken cancellationToken)
+    public async Task<LogResponse> GetLogByIdAsync(Guid logId, CancellationToken cancellationToken)
     {
         var log = await _unitOfWork.Logs.GetByIdAsync(logId, cancellationToken)
             ?? throw new KeyNotFoundException($"Log with ID {logId} not found.");
 
-        return MapToResponse(log);
+        return _mapper.Map<LogResponse>(log);
     }
 
-    public async Task<List<LogResponse>> GetHistoryByEntityIdAsync(Guid entityId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<LogResponse>> GetHistoryByEntityIdAsync(Guid entityId, CancellationToken cancellationToken)
     {
         var logs = await _unitOfWork.Logs.GetByEntityIdAsync(entityId, cancellationToken);
 
-        return logs.OrderByDescending(x => x.CreatedAt).Select(MapToResponse).ToList();
+        return _mapper.Map<IEnumerable<LogResponse>>(logs).OrderByDescending(x => x.CreatedAt);
     }
 
-    public async Task<List<LogResponse>> GetRecentLogsAsync(CancellationToken cancellationToken, int count = 15)
+    public async Task<IEnumerable<LogResponse>> GetRecentLogsAsync(CancellationToken cancellationToken, int count = 15)
     {
         var logs = await _unitOfWork.Logs.GetRecentAsync(count, cancellationToken);
 
-        return logs.Select(MapToResponse).ToList();
-    }
-
-    private static LogResponse MapToResponse(OperationLog o)
-    {
-        return new LogResponse(
-            o.Id,
-            o.Action,
-            o.Details,
-            o.CreatedAt,
-            o.RelatedEntityId,
-            o.OperatorId
-        );
+        return _mapper.Map<IEnumerable<LogResponse>>(logs);
     }
 }

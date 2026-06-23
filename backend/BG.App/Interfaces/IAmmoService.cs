@@ -10,6 +10,6 @@ public interface IAmmoService
     Task IssueAmmoAsync(IssueAmmoRequest request, CancellationToken cancellationToken = default);
     Task RestockAsync(RestockAmmoRequest request, CancellationToken cancellationToken = default);
     Task AuditInventoryAsync(AuditAmmoInventoryRequest request, CancellationToken cancellationToken = default);
-    Task<AmmoResponse?> GetCrateByIdAsync(Guid crateId, CancellationToken cancellationToken = default);
-    Task<List<AmmoResponse>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<AmmoResponse> GetCrateByIdAsync(Guid crateId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<AmmoResponse>> GetAllAsync(CancellationToken cancellationToken = default);
 }

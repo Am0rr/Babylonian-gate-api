@@ -1,3 +1,4 @@
+using AutoMapper;
 using BG.App.DTOs.Weapons;
 using BG.App.Interfaces;
 using BG.Domain.Entities;
@@ -9,13 +10,16 @@ namespace BG.App.Services;
 public class WeaponService : BaseService, IWeaponService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public WeaponService(
         IUnitOfWork unitOfWork,
+        IMapper mapper,
         IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<Guid> CreateAsync(CreateWeaponRequest request, CancellationToken cancellationToken)
@@ -168,32 +172,18 @@ public class WeaponService : BaseService, IWeaponService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<WeaponResponse?> GetWeaponByIdAsync(Guid weaponId, CancellationToken cancellationToken)
+    public async Task<WeaponResponse> GetWeaponByIdAsync(Guid weaponId, CancellationToken cancellationToken)
     {
         var weapon = await _unitOfWork.Weapons.GetByIdAsync(weaponId, cancellationToken)
             ?? throw new KeyNotFoundException($"Weapon with ID {weaponId} not found.");
 
-        return MapToResponse(weapon);
+        return _mapper.Map<WeaponResponse>(weapon);
     }
 
-    public async Task<List<WeaponResponse>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<WeaponResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
         var weapons = await _unitOfWork.Weapons.GetAllAsync(cancellationToken);
 
-        return weapons.Select(MapToResponse).ToList();
-    }
-
-    private static WeaponResponse MapToResponse(Weapon w)
-    {
-        return new WeaponResponse(
-            w.Id,
-            w.Codename,
-            w.SerialNumber,
-            w.Caliber,
-            w.Type.ToString(),
-            w.Status.ToString(),
-            w.Condition,
-            w.IssuedToSoldierId
-        );
+        return _mapper.Map<IEnumerable<WeaponResponse>>(weapons);
     }
 }

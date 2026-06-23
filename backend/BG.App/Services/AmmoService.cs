@@ -3,19 +3,23 @@ using BG.App.Interfaces;
 using BG.Domain.Interfaces;
 using BG.Domain.Enums;
 using BG.Domain.Entities;
+using AutoMapper;
 
 namespace BG.App.Services;
 
 public class AmmoService : BaseService, IAmmoService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public AmmoService(
         IUnitOfWork unitOfWork,
+        IMapper mapper,
         IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<Guid> CreateAsync(CreateAmmoRequest request, CancellationToken cancellationToken)
@@ -174,29 +178,18 @@ public class AmmoService : BaseService, IAmmoService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<AmmoResponse?> GetCrateByIdAsync(Guid crateId, CancellationToken cancellationToken)
+    public async Task<AmmoResponse> GetCrateByIdAsync(Guid crateId, CancellationToken cancellationToken)
     {
         var crate = await _unitOfWork.Crates.GetByIdAsync(crateId, cancellationToken)
             ?? throw new KeyNotFoundException($"Crate with ID {crateId} not found.");
 
-        return MapToResponse(crate);
+        return _mapper.Map<AmmoResponse>(crate);
     }
 
-    public async Task<List<AmmoResponse>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<AmmoResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
         var crates = await _unitOfWork.Crates.GetAllAsync(cancellationToken);
 
-        return crates.Select(MapToResponse).ToList();
-    }
-
-    private static AmmoResponse MapToResponse(AmmoCrate a)
-    {
-        return new AmmoResponse(
-            a.Id,
-            a.LotNumber,
-            a.Caliber,
-            a.Quantity,
-            a.Type.ToString()
-        );
+        return _mapper.Map<IEnumerable<AmmoResponse>>(crates);
     }
 }
