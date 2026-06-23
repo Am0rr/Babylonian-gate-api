@@ -4,7 +4,7 @@ namespace BG.App.Interfaces;
 
 public interface IAmmoService
 {
-    Task<Guid> CreateAsync(CreateAmmoRequest request, CancellationToken cancellationToken = default);
+    Task<AmmoResponse> CreateAsync(CreateAmmoRequest request, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid crateId, CancellationToken cancellationToken = default);
     Task UpdateDetailsAsync(Guid crateId, UpdateAmmoDetailsRequest request, CancellationToken cancellationToken = default);
     Task IssueAmmoAsync(IssueAmmoRequest request, CancellationToken cancellationToken = default);

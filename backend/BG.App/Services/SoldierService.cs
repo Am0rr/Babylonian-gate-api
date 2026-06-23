@@ -23,7 +23,7 @@ public class SoldierService : BaseService, ISoldierService
         _mapper = mapper;
     }
 
-    public async Task<Guid> CreateAsync(CreateSoldierRequest request, CancellationToken cancellationToken)
+    public async Task<SoldierResponse> CreateAsync(CreateSoldierRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
@@ -42,7 +42,7 @@ public class SoldierService : BaseService, ISoldierService
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return soldier.Id;
+        return _mapper.Map<SoldierResponse>(soldier);
     }
 
     public async Task UpdateAsync(Guid soldierId, UpdateSoldierRequest request, CancellationToken cancellationToken)

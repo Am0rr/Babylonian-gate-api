@@ -16,13 +16,13 @@ public class WeaponsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateWeaponRequest request)
+    public async Task<ActionResult<WeaponResponse>> Create(CreateWeaponRequest request)
     {
-        var id = await _weaponService.CreateAsync(request);
-        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+        var response = await _weaponService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
-    [HttpPatch("details")]
+    [HttpPatch("{id:guid}")]
     public async Task<IActionResult> UpdateDetails(Guid id, [FromBody] UpdateWeaponDetailsRequest request)
     {
         await _weaponService.UpdateDetailsAsync(id, request);
@@ -65,7 +65,7 @@ public class WeaponsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<ActionResult<WeaponResponse>> GetById(Guid id)
     {
         var weapon = await _weaponService.GetWeaponByIdAsync(id);
 
@@ -73,7 +73,7 @@ public class WeaponsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<IEnumerable<WeaponResponse>>> GetAll()
     {
         var weapons = await _weaponService.GetAllAsync();
 

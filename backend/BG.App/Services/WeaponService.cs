@@ -22,7 +22,7 @@ public class WeaponService : BaseService, IWeaponService
         _mapper = mapper;
     }
 
-    public async Task<Guid> CreateAsync(CreateWeaponRequest request, CancellationToken cancellationToken)
+    public async Task<WeaponResponse> CreateAsync(CreateWeaponRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
@@ -42,7 +42,7 @@ public class WeaponService : BaseService, IWeaponService
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return weapon.Id;
+        return _mapper.Map<WeaponResponse>(weapon);
     }
 
     public async Task DeleteAsync(Guid weaponId, CancellationToken cancellationToken)

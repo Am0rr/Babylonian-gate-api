@@ -1,6 +1,5 @@
 using BG.App.DTOs.Soldiers;
 using BG.App.Interfaces;
-using BG.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BG.Api.Controllers;
@@ -17,10 +16,10 @@ public class SoldiersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateSoldierRequest request)
+    public async Task<ActionResult<SoldierResponse>> Create(CreateSoldierRequest request)
     {
-        var id = await _soldierService.CreateAsync(request);
-        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+        var response = await _soldierService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, new { response });
     }
 
     [HttpPatch]
@@ -38,7 +37,7 @@ public class SoldiersController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<ActionResult<SoldierResponse>> GetById(Guid id)
     {
         var soldier = await _soldierService.GetSoldierByIdAsync(id);
 
@@ -46,7 +45,7 @@ public class SoldiersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<IEnumerable<SoldierResponse>>> GetAll()
     {
         var soldiers = await _soldierService.GetAllAsync();
         return Ok(soldiers);

@@ -22,7 +22,7 @@ public class AmmoService : BaseService, IAmmoService
         _mapper = mapper;
     }
 
-    public async Task<Guid> CreateAsync(CreateAmmoRequest request, CancellationToken cancellationToken)
+    public async Task<AmmoResponse> CreateAsync(CreateAmmoRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
@@ -42,7 +42,7 @@ public class AmmoService : BaseService, IAmmoService
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return crate.Id;
+        return _mapper.Map<AmmoResponse>(crate);
     }
 
     public async Task DeleteAsync(Guid crateId, CancellationToken cancellationToken)

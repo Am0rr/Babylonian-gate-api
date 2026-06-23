@@ -16,10 +16,10 @@ public class AmmosController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateAmmoRequest request)
+    public async Task<ActionResult<AmmoResponse>> Create(CreateAmmoRequest request)
     {
-        var id = await _ammoService.CreateAsync(request);
-        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+        var response = await _ammoService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
     [HttpDelete("{id:guid}")]
@@ -29,7 +29,7 @@ public class AmmosController : ControllerBase
         return NoContent();
     }
 
-    [HttpPatch("details")]
+    [HttpPatch("{id:guid}")]
     public async Task<IActionResult> UpdateDetails(Guid id, [FromBody] UpdateAmmoDetailsRequest request)
     {
         await _ammoService.UpdateDetailsAsync(id, request);
@@ -58,7 +58,7 @@ public class AmmosController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<ActionResult<AmmoResponse>> GetById(Guid id)
     {
         var crate = await _ammoService.GetCrateByIdAsync(id);
 
@@ -66,7 +66,7 @@ public class AmmosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<IEnumerable<AmmoResponse>>> GetAll()
     {
         var crates = await _ammoService.GetAllAsync();
 
