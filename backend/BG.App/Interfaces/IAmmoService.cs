@@ -5,12 +5,12 @@ namespace BG.App.Interfaces;
 
 public interface IAmmoService
 {
-    Task<Guid> CreateAsync(CreateAmmoRequest request);
-    Task DeleteAsync(Guid crateId);
-    Task UpdateDetailsAsync(UpdateAmmoDetailsRequest request);
-    Task IssueAmmoAsync(IssueAmmoRequest request);
-    Task RestockAsync(RestockAmmoRequest request);
-    Task AuditInventoryAsync(AuditAmmoInventoryRequest request);
-    Task<AmmoResponse?> GetCrateByIdAsync(Guid crateId);
-    Task<List<AmmoResponse>> GetAllAsync();
+    Task<Guid> CreateAsync(CreateAmmoRequest request, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Guid crateId, CancellationToken cancellationToken = default);
+    Task UpdateDetailsAsync(UpdateAmmoDetailsRequest request, CancellationToken cancellationToken = default);
+    Task IssueAmmoAsync(IssueAmmoRequest request, CancellationToken cancellationToken = default);
+    Task RestockAsync(RestockAmmoRequest request, CancellationToken cancellationToken = default);
+    Task AuditInventoryAsync(AuditAmmoInventoryRequest request, CancellationToken cancellationToken = default);
+    Task<AmmoResponse?> GetCrateByIdAsync(Guid crateId, CancellationToken cancellationToken = default);
+    Task<List<AmmoResponse>> GetAllAsync(CancellationToken cancellationToken = default);
 }

@@ -1,10 +1,11 @@
 using BG.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace BG.Domain.Interfaces;
 
-public interface ILogRepository : IRepository<OperationLog>
+public interface ILogRepository
 {
-    Task<List<OperationLog>> FindAsync(Expression<Func<OperationLog, bool>> predicate);
-    Task<List<OperationLog>> GetRecentAsync(int count);
+    void Add(OperationLog item);
+    Task<OperationLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<List<OperationLog>> GetByEntityIdAsync(Guid entityId, CancellationToken cancellationToken = default);
+    Task<List<OperationLog>> GetRecentAsync(int count, CancellationToken cancellationToken = default);
 }

@@ -16,6 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
     </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.*" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
   </ItemGroup>
 

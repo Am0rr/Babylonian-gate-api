@@ -3,6 +3,7 @@ using BG.App.Interfaces;
 using BG.Domain.Interfaces;
 using BG.Domain.Entities;
 using BG.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace BG.App.Services;
 
@@ -18,7 +19,7 @@ public class SoldierService : BaseService, ISoldierService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Guid> CreateAsync(CreateSoldierRequest request)
+    public async Task<Guid> CreateAsync(CreateSoldierRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
@@ -30,26 +31,22 @@ public class SoldierService : BaseService, ISoldierService
             rank
         );
 
-        await _unitOfWork.Soldiers.AddAsync(soldier);
+        _unitOfWork.Soldiers.Add(soldier);
 
         var log = OperationLog.Create("Create", $"Recruited soldier {soldier.LastName}", soldier.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return soldier.Id;
     }
 
-    public async Task UpdateAsync(UpdateSoldierRequest request)
+    public async Task UpdateAsync(UpdateSoldierRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.Id);
-
-        if (soldier is null)
-        {
-            throw new KeyNotFoundException($"Soldier with ID {request.Id} not found.");
-        }
+        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.Id, cancellationToken)
+            ?? throw new KeyNotFoundException($"Soldier with ID {request.Id} not found.");
 
         var rank = Enum.Parse<SoldierRank>(request.Rank, ignoreCase: true);
 
@@ -81,51 +78,41 @@ public class SoldierService : BaseService, ISoldierService
         _unitOfWork.Soldiers.Update(soldier);
 
         var log = OperationLog.Create("Update", $"Updated soldier {soldier.LastName}. Changes: {string.Join(", ", logDetails)}", soldier.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
 
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Guid soldierId)
+    public async Task DeleteAsync(Guid soldierId, CancellationToken cancellationToken)
     {
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(soldierId);
+        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(soldierId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Soldier with ID {soldierId} not found.");
 
-        if (soldier is null)
-        {
-            throw new KeyNotFoundException($"Soldier with ID {soldierId} not found.");
-        }
-
-        var hasWeapon = await _unitOfWork.Weapons.HasAnyBySoldierIdAsync(soldierId);
+        var hasWeapon = await _unitOfWork.Weapons.Query().AnyAsync(w => w.IssuedToSoldierId == soldierId, cancellationToken);
 
         if (hasWeapon)
-        {
             throw new InvalidOperationException("Cannot delete soldier because they still have assigned weapons. Return weapons to storage first.");
-        }
 
         _unitOfWork.Soldiers.Delete(soldier);
 
         var log = OperationLog.Create("Delete", $"Discharged soldier {soldier.LastName}", soldier.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<SoldierResponse?> GetSoldierByIdAsync(Guid soldierId)
+    public async Task<SoldierResponse?> GetSoldierByIdAsync(Guid soldierId, CancellationToken cancellationToken)
     {
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(soldierId);
-
-        if (soldier is null)
-        {
-            return null;
-        }
+        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(soldierId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Soldier with ID {soldierId} not found.");
 
         return MapToResponse(soldier);
     }
 
-    public async Task<List<SoldierResponse>> GetAllAsync()
+    public async Task<List<SoldierResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var soldiers = await _unitOfWork.Soldiers.GetAllAsync();
+        var soldiers = await _unitOfWork.Soldiers.GetAllAsync(cancellationToken);
 
         return soldiers.Select(MapToResponse).ToList();
     }

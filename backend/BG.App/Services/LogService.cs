@@ -14,28 +14,24 @@ public class LogService : ILogService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<LogResponse?> GetLogByIdAsync(Guid id)
+    public async Task<LogResponse?> GetLogByIdAsync(Guid logId, CancellationToken cancellationToken)
     {
-        var log = await _unitOfWork.Logs.GetByIdAsync(id);
-
-        if (log is null)
-        {
-            return null;
-        }
+        var log = await _unitOfWork.Logs.GetByIdAsync(logId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Log with ID {logId} not found.");
 
         return MapToResponse(log);
     }
 
-    public async Task<List<LogResponse>> GetHistoryByEntityIdAsync(Guid entityId)
+    public async Task<List<LogResponse>> GetHistoryByEntityIdAsync(Guid entityId, CancellationToken cancellationToken)
     {
-        var logs = await _unitOfWork.Logs.FindAsync(l => l.RelatedEntityId == entityId);
+        var logs = await _unitOfWork.Logs.GetByEntityIdAsync(entityId, cancellationToken);
 
         return logs.OrderByDescending(x => x.CreatedAt).Select(MapToResponse).ToList();
     }
 
-    public async Task<List<LogResponse>> GetRecentLogsAsync(int count = 100)
+    public async Task<List<LogResponse>> GetRecentLogsAsync(CancellationToken cancellationToken, int count = 15)
     {
-        var logs = await _unitOfWork.Logs.GetRecentAsync(count);
+        var logs = await _unitOfWork.Logs.GetRecentAsync(count, cancellationToken);
 
         return logs.Select(MapToResponse).ToList();
     }

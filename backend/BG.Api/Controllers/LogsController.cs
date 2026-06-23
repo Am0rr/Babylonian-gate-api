@@ -29,9 +29,9 @@ public class LogsController : ControllerBase
     }
 
     [HttpGet("recent")]
-    public async Task<IActionResult> GetRecentLogs([FromQuery] int count = 100)
+    public async Task<IActionResult> GetRecentLogs(CancellationToken cancellationToken, [FromQuery] int count = 100)
     {
-        var logs = await _logService.GetRecentLogsAsync(count);
+        var logs = await _logService.GetRecentLogsAsync(cancellationToken, count);
         return Ok(logs);
     }
 }

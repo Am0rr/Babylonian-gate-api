@@ -18,7 +18,7 @@ public class WeaponService : BaseService, IWeaponService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Guid> CreateAsync(CreateWeaponRequest request)
+    public async Task<Guid> CreateAsync(CreateWeaponRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
@@ -31,49 +31,38 @@ public class WeaponService : BaseService, IWeaponService
             type
         );
 
-        await _unitOfWork.Weapons.AddAsync(weapon);
+        _unitOfWork.Weapons.Add(weapon);
 
         var log = OperationLog.Create("Create", $"Claimed weapon {weapon.Codename}, with SN {weapon.SerialNumber}", weapon.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return weapon.Id;
     }
 
-    public async Task DeleteAsync(Guid weaponId)
+    public async Task DeleteAsync(Guid weaponId, CancellationToken cancellationToken)
     {
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(weaponId);
-
-        if (weapon is null)
-        {
-            throw new KeyNotFoundException($"Weapon with ID {weaponId} not found.");
-        }
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(weaponId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Weapon with ID {weaponId} not found.");
 
         if (weapon.Status == WeaponStatus.Deployed)
-        {
             throw new InvalidOperationException("Cannot delete weapon because it is currently issued to a soldier. Return it to storage first.");
-        }
 
         _unitOfWork.Weapons.Delete(weapon);
 
         var log = OperationLog.Create("Delete", $"Deleted weapon {weapon.Codename}, with SN {weapon.SerialNumber}", weapon.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateDetailsAsync(UpdateWeaponDetailsRequest request)
+    public async Task UpdateDetailsAsync(UpdateWeaponDetailsRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.Id);
-
-        if (weapon is null)
-        {
-            throw new KeyNotFoundException($"Weapon with ID {request.Id} not found.");
-        }
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.Id, cancellationToken)
+            ?? throw new KeyNotFoundException($"Weapon with ID {request.Id} not found.");
 
         bool hasChanges = false;
         var logDetails = new List<string>();
@@ -107,127 +96,89 @@ public class WeaponService : BaseService, IWeaponService
             return;
         }
 
-        _unitOfWork.Weapons.Update(weapon);
-
         var log = OperationLog.Create("Update", $"Updated details: {string.Join(", ", logDetails)}", weapon.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-
-        await _unitOfWork.CompleteAsync();
-
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task IssueWeaponAsync(IssueWeaponRequest request)
+    public async Task IssueWeaponAsync(IssueWeaponRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
 
-        if (weapon is null)
-        {
-            throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
-        }
-
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.SoldierId);
-
-        if (soldier is null)
-        {
-            throw new KeyNotFoundException($"Soldier with ID {request.SoldierId} not found.");
-        }
+        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.SoldierId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Soldier with ID {request.SoldierId} not found.");
 
         weapon.IssueTo(soldier.Id);
 
-        _unitOfWork.Weapons.Update(weapon);
-
         var log = OperationLog.Create("Issue", $"Weapon {weapon.Codename}, with SN {weapon.SerialNumber} \n - Issued to {soldier.LastName} {soldier.FirstName} (ID: {soldier.Id})", weapon.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task ReturnToStorageAsync(ReturnWeaponToStorageRequest request)
+    public async Task ReturnToStorageAsync(ReturnWeaponToStorageRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
-
-        if (weapon is null)
-        {
-            throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
-        }
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId)
+            ?? throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
 
         weapon.ApplyWear(request.RoundsFired);
 
         weapon.ReturnToStorage();
 
-        _unitOfWork.Weapons.Update(weapon);
-
         var log = OperationLog.Create("Return", $"Weapon {weapon.Codename}, with SN {weapon.SerialNumber}\n - Has been returned to storage with {weapon.Condition} condition", weapon.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task SendToMaintenanceAsync(SendWeaponToMaintenanceRequest request)
+    public async Task SendToMaintenanceAsync(SendWeaponToMaintenanceRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
-
-        if (weapon is null)
-        {
-            throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
-        }
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId)
+            ?? throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
 
         weapon.SendToMaintenance();
 
-        _unitOfWork.Weapons.Update(weapon);
-
         var log = OperationLog.Create("Maintenance", $"Weapon {weapon.Codename}, with SN {weapon.SerialNumber}\n - Has been sent to maintenance", weapon.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task ReportMissingAsync(ReportWeaponMissingRequest request)
+    public async Task ReportMissingAsync(ReportWeaponMissingRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId);
-
-        if (weapon is null)
-        {
-            throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
-        }
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
 
         weapon.MarkAsMissing();
 
-        _unitOfWork.Weapons.Update(weapon);
-
         var log = OperationLog.Create("Missing", $"Weapon {weapon.Codename}, with SN {weapon.SerialNumber}\n - Has been marked as {weapon.Status}", weapon.Id);
-        await _unitOfWork.Logs.AddAsync(log);
+        _unitOfWork.Logs.Add(log);
 
 
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<WeaponResponse?> GetWeaponByIdAsync(Guid weaponId)
+    public async Task<WeaponResponse?> GetWeaponByIdAsync(Guid weaponId, CancellationToken cancellationToken)
     {
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(weaponId);
-
-        if (weapon is null)
-        {
-            return null;
-        }
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(weaponId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Weapon with ID {weaponId} not found.");
 
         return MapToResponse(weapon);
     }
 
-    public async Task<List<WeaponResponse>> GetAllAsync()
+    public async Task<List<WeaponResponse>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var weapons = await _unitOfWork.Weapons.GetAllAsync();
+        var weapons = await _unitOfWork.Weapons.GetAllAsync(cancellationToken);
 
         return weapons.Select(MapToResponse).ToList();
     }

@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using BG.Domain.Entities;
 using BG.Domain.Interfaces;
 using BG.Infra.Persistence;
@@ -8,37 +7,37 @@ namespace BG.Infra.Repositories;
 
 public class LogRepository : ILogRepository
 {
-    private readonly BabylonianDbContext _context;
+    private readonly DbSet<OperationLog> _dbSet;
 
     public LogRepository(BabylonianDbContext context)
     {
-        _context = context;
+        _dbSet = context.Set<OperationLog>();
     }
 
-    public async Task<List<OperationLog>> GetAllAsync()
+    public void Add(OperationLog item)
     {
-        throw new NotSupportedException("Fetching ALL logs is not allowed due to performance. Use GetRecentAsync instead.");
+        _dbSet.Add(item);
     }
 
-    public async Task<OperationLog?> GetByIdAsync(Guid id)
+    public async Task<OperationLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _context.OperationLogs.FindAsync(id);
+        return await _dbSet.FindAsync(id);
     }
 
-    public async Task<Guid> AddAsync(OperationLog item)
+    public async Task<List<OperationLog>> GetByEntityIdAsync(Guid entityId, CancellationToken cancellationToken = default)
     {
-        await _context.AddAsync(item);
-
-        return item.Id;
+        return await _dbSet
+                .AsNoTracking()
+                .Where(x => x.RelatedEntityId == entityId)
+                .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<OperationLog>> FindAsync(Expression<Func<OperationLog, bool>> predicate)
+    public async Task<List<OperationLog>> GetRecentAsync(int count, CancellationToken cancellationToken)
     {
-        return await _context.OperationLogs.AsNoTracking().Where(predicate).ToListAsync();
-    }
-
-    public async Task<List<OperationLog>> GetRecentAsync(int count)
-    {
-        return await _context.OperationLogs.AsNoTracking().OrderByDescending(x => x.CreatedAt).Take(count).ToListAsync();
+        return await _dbSet
+                .AsNoTracking()
+                .OrderByDescending(x => x.CreatedAt)
+                .Take(count)
+                .ToListAsync(cancellationToken);
     }
 }

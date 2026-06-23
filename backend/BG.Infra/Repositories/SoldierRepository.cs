@@ -1,4 +1,3 @@
-using BG.Domain.Common;
 using BG.Domain.Entities;
 using BG.Domain.Interfaces;
 using BG.Infra.Persistence;
@@ -6,39 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BG.Infra.Repositories;
 
-public class SoldierRepository : ISoldierRepository
+public class SoldierRepository : BaseRepository<Soldier>, ISoldierRepository
 {
-    private readonly BabylonianDbContext _context;
-
-    public SoldierRepository(BabylonianDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<List<Soldier>> GetAllAsync()
-    {
-        return await _context.Soldiers.AsNoTracking().ToListAsync();
-    }
-
-    public async Task<Soldier?> GetByIdAsync(Guid id)
-    {
-        return await _context.Soldiers.FindAsync(id);
-    }
-
-    public async Task<Guid> AddAsync(Soldier item)
-    {
-        await _context.AddAsync(item);
-
-        return item.Id;
-    }
-
-    public void Delete(Soldier item)
-    {
-        _context.Remove(item);
-    }
-
-    public void Update(Soldier item)
-    {
-        _context.Update(item);
-    }
+    public SoldierRepository(BabylonianDbContext context) : base(context) { }
 }
