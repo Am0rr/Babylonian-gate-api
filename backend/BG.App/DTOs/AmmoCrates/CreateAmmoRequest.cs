@@ -1,9 +1,6 @@
+namespace BG.App.DTOs.AmmoCrates;
 
-
-namespace BG.App.DTOs;
-
-public record AmmoResponse(
-    Guid Id,
+public record CreateAmmoRequest(
     string LotNumber,
     string Caliber,
     int Quantity,

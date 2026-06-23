@@ -1,4 +1,4 @@
-using BG.App.DTOs;
+using BG.App.DTOs.Weapons;
 
 namespace BG.App.Interfaces;
 

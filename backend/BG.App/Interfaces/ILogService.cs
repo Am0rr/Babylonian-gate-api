@@ -1,6 +1,4 @@
-
-
-using BG.App.DTOs;
+using BG.App.DTOs.OperationLogs;
 
 namespace BG.App.Interfaces;
 

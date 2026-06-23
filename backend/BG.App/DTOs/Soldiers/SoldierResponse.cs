@@ -1,6 +1,4 @@
-using BG.Domain.Enums;
-
-namespace BG.App.DTOs;
+namespace BG.App.DTOs.Soldiers;
 
 public record SoldierResponse(
     Guid Id,

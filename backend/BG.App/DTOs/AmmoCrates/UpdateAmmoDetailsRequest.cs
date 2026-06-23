@@ -1,6 +1,4 @@
-using BG.Domain.Enums;
-
-namespace BG.App.DTOs;
+namespace BG.App.DTOs.AmmoCrates;
 
 public record UpdateAmmoDetailsRequest(
     Guid Id,

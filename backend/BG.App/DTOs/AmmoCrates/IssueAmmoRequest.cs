@@ -1,6 +1,4 @@
-
-
-namespace BG.App.DTOs;
+namespace BG.App.DTOs.AmmoCrates;
 
 public record IssueAmmoRequest(
     Guid CrateId,

@@ -1,5 +1,4 @@
-using BG.App.DTOs;
-using BG.Domain.Entities;
+using BG.App.DTOs.AmmoCrates;
 
 namespace BG.App.Interfaces;
 

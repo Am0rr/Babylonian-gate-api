@@ -1,4 +1,4 @@
-using BG.App.DTOs;
+using BG.App.DTOs.Weapons;
 using BG.App.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-using BG.App.DTOs;
+using BG.App.DTOs.Soldiers;
 using BG.App.Interfaces;
 using BG.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
