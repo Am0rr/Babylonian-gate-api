@@ -14,7 +14,7 @@ public class BabylonianDbContext : DbContext
     public DbSet<Weapon> Weapons { get; set; }
     public DbSet<AmmoCrate> AmmoCrates { get; set; }
     public DbSet<OperationLog> OperationLogs { get; set; }
-    public DbSet<Soldier> Soldiers { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

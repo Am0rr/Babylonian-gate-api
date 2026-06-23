@@ -121,13 +121,8 @@ public class WeaponService : BaseService, IWeaponService
         var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.WeaponId, cancellationToken)
             ?? throw new KeyNotFoundException($"Weapon with ID {request.WeaponId} not found.");
 
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.SoldierId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Soldier with ID {request.SoldierId} not found.");
-
-        weapon.IssueTo(soldier.Id);
-
-        var log = OperationLog.Create("Issue", $"Weapon {weapon.Codename}, with SN {weapon.SerialNumber} \n - Issued to {soldier.LastName} {soldier.FirstName} (ID: {soldier.Id})", weapon.Id);
-        _unitOfWork.Logs.Add(log);
+        // var log = OperationLog.Create("Issue", $"Weapon {weapon.Codename}, with SN {weapon.SerialNumber} \n - Issued to {soldier.LastName} {soldier.FirstName} (ID: {soldier.Id})", weapon.Id);
+        // _unitOfWork.Logs.Add(log);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }

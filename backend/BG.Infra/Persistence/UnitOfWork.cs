@@ -9,20 +9,17 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     public IWeaponRepository Weapons { get; private set; }
     public IAmmoRepository Crates { get; private set; }
     public ILogRepository Logs { get; private set; }
-    public ISoldierRepository Soldiers { get; private set; }
 
     public UnitOfWork(BabylonianDbContext context,
     IWeaponRepository weaponRepository,
     IAmmoRepository ammoRepository,
-    ILogRepository logRepository,
-    ISoldierRepository soldierRepository)
+    ILogRepository logRepository)
     {
         _context = context;
 
         Weapons = weaponRepository;
         Crates = ammoRepository;
         Logs = logRepository;
-        Soldiers = soldierRepository;
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

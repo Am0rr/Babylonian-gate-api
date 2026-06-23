@@ -114,19 +114,16 @@ public class AmmoService : BaseService, IAmmoService
         var crate = await _unitOfWork.Crates.GetByIdAsync(request.CrateId, cancellationToken)
             ?? throw new KeyNotFoundException($"Crate with ID {request.CrateId} not found.");
 
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.SoldierId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Soldier with ID {request.SoldierId} not found.");
-
         crate.Issue(request.Amount);
 
         _unitOfWork.Crates.Update(crate);
 
-        string logMessage = $"Issued {request.Amount} rounds ({crate.Type}) to {soldier.LastName} {soldier.FirstName}. " +
-                        $"From Lot #{crate.LotNumber}. Remaining: {crate.Quantity}";
+        // string logMessage = $"Issued {request.Amount} rounds ({crate.Type}) to {soldier.LastName} {soldier.FirstName}. " +
+        //                 $"From Lot #{crate.LotNumber}. Remaining: {crate.Quantity}";
 
-        var log = OperationLog.Create("Issue", logMessage, crate.Id);
+        // var log = OperationLog.Create("Issue", logMessage, crate.Id);
 
-        _unitOfWork.Logs.Add(log);
+        // _unitOfWork.Logs.Add(log);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
@@ -138,17 +135,14 @@ public class AmmoService : BaseService, IAmmoService
         var crate = await _unitOfWork.Crates.GetByIdAsync(request.CrateId, cancellationToken)
             ?? throw new KeyNotFoundException($"Crate with ID {request.CrateId} not found.");
 
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.SoldierId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Soldier with ID {request.SoldierId} not found.");
-
 
         crate.Restock(request.Amount);
 
-        string logMessage = $"Restocked {request.Amount} rounds ({crate.Type}) from {soldier.LastName} {soldier.FirstName}. " +
-                        $"In Lot #{crate.LotNumber}. Remaining: {crate.Quantity}";
+        // string logMessage = $"Restocked {request.Amount} rounds ({crate.Type}) from {soldier.LastName} {soldier.FirstName}. " +
+        //                 $"In Lot #{crate.LotNumber}. Remaining: {crate.Quantity}";
 
-        var log = OperationLog.Create("Restock", logMessage, crate.Id);
-        _unitOfWork.Logs.Add(log);
+        // var log = OperationLog.Create("Restock", logMessage, crate.Id);
+        // _unitOfWork.Logs.Add(log);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
