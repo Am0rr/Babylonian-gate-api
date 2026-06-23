@@ -22,54 +22,52 @@ public class WeaponsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id }, new { id });
     }
 
-    [HttpPut("details")]
-    public async Task<IActionResult> UpdateDetails(UpdateWeaponDetailsRequest request)
+    [HttpPatch("details")]
+    public async Task<IActionResult> UpdateDetails(Guid id, [FromBody] UpdateWeaponDetailsRequest request)
     {
-        await _weaponService.UpdateDetailsAsync(request);
-        return Ok(new { message = "Weapon details updated" });
+        await _weaponService.UpdateDetailsAsync(id, request);
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _weaponService.DeleteAsync(id);
-        return Ok(new { message = "Weapon deleted successfully" });
+        return NoContent();
     }
 
     [HttpPost("issue")]
     public async Task<IActionResult> Issue(IssueWeaponRequest request)
     {
         await _weaponService.IssueWeaponAsync(request);
-        return Ok(new { message = "Weapon issued successfully" });
+        return NoContent();
     }
 
     [HttpPost("return")]
     public async Task<IActionResult> ReturnToStorage(ReturnWeaponToStorageRequest request)
     {
         await _weaponService.ReturnToStorageAsync(request);
-        return Ok(new { message = "Weapon returned successfully" });
+        return NoContent();
     }
 
     [HttpPost("maintenance")]
     public async Task<IActionResult> SendToMaintenance(SendWeaponToMaintenanceRequest request)
     {
         await _weaponService.SendToMaintenanceAsync(request);
-        return Ok(new { message = "Weapon sent to maintenance successfully" });
+        return NoContent();
     }
 
     [HttpPost("report")]
     public async Task<IActionResult> ReportMissing(ReportWeaponMissingRequest request)
     {
         await _weaponService.ReportMissingAsync(request);
-        return Ok(new { message = "Weapon missing reported successfully" });
+        return NoContent();
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var weapon = await _weaponService.GetWeaponByIdAsync(id);
-
-        if (weapon is null) return NotFound();
 
         return Ok(weapon);
     }
@@ -78,6 +76,7 @@ public class WeaponsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var weapons = await _weaponService.GetAllAsync();
+
         return Ok(weapons);
     }
 }

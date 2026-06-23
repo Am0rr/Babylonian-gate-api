@@ -17,11 +17,7 @@ public class Soldier : BaseEntity
         Rank = rank;
     }
 
-    public void UpdateName(string firstName, string lastName)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-    }
-
-    public void UpdateRank(SoldierRank newRank) => Rank = newRank;
+    public void ChangeFirstName(string newFirstName) => FirstName = newFirstName;
+    public void ChangeLastName(string newLastName) => LastName = newLastName;
+    public void ChangeRank(SoldierRank newRank) => Rank = newRank;
 }

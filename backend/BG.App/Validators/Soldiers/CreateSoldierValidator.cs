@@ -1,4 +1,4 @@
-using BG.App.DTOs;
+using BG.App.DTOs.Soldiers;
 using BG.Domain.Enums;
 using FluentValidation;
 

@@ -1,4 +1,4 @@
-using BG.App.DTOs;
+using BG.App.DTOs.Soldiers;
 using BG.Domain.Enums;
 using FluentValidation;
 
@@ -8,7 +8,6 @@ public class UpdateSoldierValidator : AbstractValidator<UpdateSoldierRequest>
 {
     public UpdateSoldierValidator()
     {
-        RuleFor(s => s.Id).NotEmpty();
         RuleFor(s => s.FirstName).NotEmpty().MaximumLength(50);
         RuleFor(s => s.LastName).NotEmpty().MaximumLength(50);
         RuleFor(s => s.Rank).IsEnumName(typeof(SoldierRank), caseSensitive: false)

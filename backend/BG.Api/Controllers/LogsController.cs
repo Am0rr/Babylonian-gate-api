@@ -18,6 +18,7 @@ public class LogsController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var log = await _logService.GetLogByIdAsync(id);
+
         return Ok(log);
     }
 
@@ -25,6 +26,7 @@ public class LogsController : ControllerBase
     public async Task<IActionResult> GetHistoryByEntityId(Guid entityId)
     {
         var logs = await _logService.GetHistoryByEntityIdAsync(entityId);
+
         return Ok(logs);
     }
 
@@ -32,6 +34,7 @@ public class LogsController : ControllerBase
     public async Task<IActionResult> GetRecentLogs(CancellationToken cancellationToken, [FromQuery] int count = 100)
     {
         var logs = await _logService.GetRecentLogsAsync(cancellationToken, count);
+
         return Ok(logs);
     }
 }

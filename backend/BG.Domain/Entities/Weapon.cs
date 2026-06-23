@@ -38,8 +38,9 @@ public class Weapon : BaseEntity
     }
 
     public void ChangeCodeName(string newCodeName) => Codename = newCodeName;
-    public void CorrectSerialNumber(string fixedSerialNumber) => SerialNumber = fixedSerialNumber;
-    public void CorrectCaliber(string correctedCaliber) => Caliber = correctedCaliber;
+    public void ChangeSerialNumber(string newSerialNumber) => SerialNumber = newSerialNumber;
+    public void ChangeCaliber(string newCaliber) => Caliber = newCaliber;
+    public void ChangeType(WeaponType newType) => Type = newType;
 
     public void IssueTo(Guid soldierId)
     {

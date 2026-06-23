@@ -64,45 +64,41 @@ public class AmmoService : BaseService, IAmmoService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateDetailsAsync(UpdateAmmoDetailsRequest request, CancellationToken cancellationToken)
+    public async Task UpdateDetailsAsync(Guid crateId, UpdateAmmoDetailsRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var crate = await _unitOfWork.Crates.GetByIdAsync(request.Id, cancellationToken)
-            ?? throw new KeyNotFoundException($"Crate with ID {request.Id} not found.");
+        var crate = await _unitOfWork.Crates.GetByIdAsync(crateId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Crate with ID {crateId} not found.");
 
-        var type = Enum.Parse<AmmoType>(request.Type, ignoreCase: true);
-
-        bool hasChanges = false;
         var logDetails = new List<string>();
 
         if (request.LotNumber != null)
         {
             string oldLotNumber = crate.LotNumber;
-            crate.CorrectLotNumber(request.LotNumber);
+
+            crate.ChangeLotNumber(request.LotNumber);
+
             logDetails.Add($"Lot: '{oldLotNumber}' -> '{request.LotNumber}'");
-            hasChanges = true;
         }
 
-        if (request.Caliber != crate.Caliber)
+        if (request.Caliber != null)
         {
             string oldCal = crate.Caliber;
-            crate.CorrectCaliber(request.Caliber);
+
+            crate.ChangeCaliber(request.Caliber);
+
             logDetails.Add($"Caliber: '{oldCal}' -> '{request.Caliber}'");
-            hasChanges = true;
         }
 
-        if (crate.Type != type)
+        if (request.Type != null)
         {
             string oldType = crate.Type.ToString();
-            crate.CorrectType(type);
-            logDetails.Add($"Type: '{oldType}' -> '{request.Type}'");
-            hasChanges = true;
-        }
 
-        if (!hasChanges)
-        {
-            return;
+            var type = Enum.Parse<AmmoType>(request.Type, ignoreCase: true);
+            crate.ChangeType(type);
+
+            logDetails.Add($"Type: '{oldType}' -> '{request.Type}'");
         }
 
         var log = OperationLog.Create("Update", $"Corrected details: {string.Join(", ", logDetails)}", crate.Id);
@@ -120,7 +116,6 @@ public class AmmoService : BaseService, IAmmoService
 
         var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.SoldierId, cancellationToken)
             ?? throw new KeyNotFoundException($"Soldier with ID {request.SoldierId} not found.");
-
 
         crate.Issue(request.Amount);
 

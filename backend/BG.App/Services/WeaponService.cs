@@ -61,43 +61,51 @@ public class WeaponService : BaseService, IWeaponService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateDetailsAsync(UpdateWeaponDetailsRequest request, CancellationToken cancellationToken)
+    public async Task UpdateDetailsAsync(Guid weaponId, UpdateWeaponDetailsRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var weapon = await _unitOfWork.Weapons.GetByIdAsync(request.Id, cancellationToken)
-            ?? throw new KeyNotFoundException($"Weapon with ID {request.Id} not found.");
+        var weapon = await _unitOfWork.Weapons.GetByIdAsync(weaponId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Weapon with ID {weaponId} not found.");
 
-        bool hasChanges = false;
         var logDetails = new List<string>();
 
-        if (request.Codename != weapon.Codename)
+        if (request.Codename != null)
         {
             string oldCodeName = weapon.Codename;
+
             weapon.ChangeCodeName(request.Codename);
+
             logDetails.Add($"Codename: '{oldCodeName}' -> '{request.Codename}'");
-            hasChanges = true;
         }
 
-        if (request.SerialNumber != weapon.SerialNumber)
+        if (request.SerialNumber != null)
         {
             string oldSerialNumber = weapon.SerialNumber;
-            weapon.CorrectSerialNumber(request.SerialNumber);
+
+            weapon.ChangeSerialNumber(request.SerialNumber);
+
             logDetails.Add($"Serial Number: '{oldSerialNumber}' -> '{request.SerialNumber}'");
-            hasChanges = true;
         }
 
-        if (request.Caliber != weapon.Caliber)
+        if (request.Caliber != null)
         {
             string oldCaliber = weapon.Caliber;
-            weapon.CorrectCaliber(request.Caliber);
+
+            weapon.ChangeCaliber(request.Caliber);
+
             logDetails.Add($"Caliber: '{oldCaliber}' -> '{request.Caliber}'");
-            hasChanges = true;
         }
 
-        if (!hasChanges)
+        if (request.Type != null)
         {
-            return;
+            var oldType = weapon.Type;
+
+            var type = Enum.Parse<WeaponType>(request.Type, ignoreCase: true);
+
+            weapon.ChangeType(type);
+
+            logDetails.Add($"Type: '{oldType}' -> '{type}'");
         }
 
         var log = OperationLog.Create("Update", $"Updated details: {string.Join(", ", logDetails)}", weapon.Id);

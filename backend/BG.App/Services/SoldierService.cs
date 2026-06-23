@@ -45,38 +45,36 @@ public class SoldierService : BaseService, ISoldierService
         return soldier.Id;
     }
 
-    public async Task UpdateAsync(UpdateSoldierRequest request, CancellationToken cancellationToken)
+    public async Task UpdateAsync(Guid soldierId, UpdateSoldierRequest request, CancellationToken cancellationToken)
     {
         Validate(request);
 
-        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(request.Id, cancellationToken)
-            ?? throw new KeyNotFoundException($"Soldier with ID {request.Id} not found.");
+        var soldier = await _unitOfWork.Soldiers.GetByIdAsync(soldierId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Soldier with ID {soldierId} not found.");
 
-        var rank = Enum.Parse<SoldierRank>(request.Rank, ignoreCase: true);
-
-        bool hasChanges = false;
         var logDetails = new List<string>();
 
-        if (soldier.FirstName != request.FirstName || soldier.LastName != request.LastName)
+        if (request.FirstName != null)
         {
             string oldFirstName = soldier.FirstName;
-            string oldLastName = soldier.LastName;
-            soldier.UpdateName(request.FirstName, request.LastName);
-            logDetails.Add($"First and Last name: '{oldFirstName}' '{oldLastName}' -> '{request.FirstName}' '{request.LastName}'");
-            hasChanges = true;
+            soldier.ChangeFirstName(request.FirstName);
+            logDetails.Add($"First name: '{oldFirstName} -> '{request.FirstName}'");
         }
 
-        if (soldier.Rank != rank)
+        if (request.LastName != null)
+        {
+            string oldLastName = soldier.LastName;
+            soldier.ChangeFirstName(request.LastName);
+            logDetails.Add($"Last name: '{oldLastName} -> '{request.LastName}'");
+        }
+
+        if (request.Rank != null)
         {
             string oldRank = soldier.Rank.ToString();
-            soldier.UpdateRank(rank);
-            logDetails.Add($"Rank: '{oldRank}' -> '{request.Rank}'");
-            hasChanges = true;
-        }
 
-        if (!hasChanges)
-        {
-            return;
+            var rank = Enum.Parse<SoldierRank>(request.Rank, ignoreCase: true);
+            soldier.ChangeRank(rank);
+            logDetails.Add($"Rank: '{oldRank}' -> '{request.Rank}'");
         }
 
         _unitOfWork.Soldiers.Update(soldier);

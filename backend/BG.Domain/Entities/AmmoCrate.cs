@@ -11,18 +11,17 @@ public class AmmoCrate : BaseEntity
 
     protected AmmoCrate() { }
 
-    public AmmoCrate(string lotNumber, string caliber, int quantity, AmmoType type)
+    public AmmoCrate(string lotNumber, string caliber, int quantity, AmmoType type = AmmoType.None)
     {
         LotNumber = lotNumber;
         Caliber = caliber;
-        Type = type;
         Quantity = quantity;
     }
 
     public void Issue(int amount) => Quantity -= amount;
     public void Restock(int amount) => Quantity += amount;
     public void AdjustQuantity(int actualQuantity) => Quantity = actualQuantity;
-    public void CorrectCaliber(string newCaliber) => Caliber = newCaliber;
-    public void CorrectType(AmmoType newType) => Type = newType;
-    public void CorrectLotNumber(string newLotNumber) => LotNumber = newLotNumber;
+    public void ChangeCaliber(string newCaliber) => Caliber = newCaliber;
+    public void ChangeType(AmmoType newType) => Type = newType;
+    public void ChangeLotNumber(string newLotNumber) => LotNumber = newLotNumber;
 }
