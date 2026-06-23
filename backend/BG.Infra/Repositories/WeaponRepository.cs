@@ -1,5 +1,5 @@
 using BG.Domain.Interfaces;
-using BG.Domain.Entities;
+using BG.Domain.Entities.Inventory;
 using BG.Infra.Persistence;
 
 namespace BG.Infra.Repositories;

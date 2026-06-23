@@ -1,6 +1,6 @@
 using BG.Domain.Enums;
 
-namespace BG.Domain.Entities;
+namespace BG.Domain.Entities.Inventory;
 
 public class AmmoCrate : BaseEntity
 {

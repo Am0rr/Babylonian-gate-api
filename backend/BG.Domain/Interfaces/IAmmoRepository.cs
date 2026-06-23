@@ -1,4 +1,4 @@
-using BG.Domain.Entities;
+using BG.Domain.Entities.Inventory;
 
 namespace BG.Domain.Interfaces;
 

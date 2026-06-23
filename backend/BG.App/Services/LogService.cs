@@ -1,7 +1,6 @@
 using AutoMapper;
 using BG.App.DTOs.OperationLogs;
 using BG.App.Interfaces;
-using BG.Domain.Entities;
 using BG.Domain.Interfaces;
 
 namespace BG.App.Services;

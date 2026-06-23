@@ -1,4 +1,4 @@
-namespace BG.Domain.Entities;
+namespace BG.Domain.Entities.Logging;
 
 public class OperationLog : BaseEntity
 {

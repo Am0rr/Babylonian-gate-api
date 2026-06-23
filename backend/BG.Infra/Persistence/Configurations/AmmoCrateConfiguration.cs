@@ -1,4 +1,4 @@
-using BG.Domain.Entities;
+using BG.Domain.Entities.Inventory;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

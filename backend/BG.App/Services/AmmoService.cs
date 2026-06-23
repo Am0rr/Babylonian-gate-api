@@ -2,7 +2,8 @@ using BG.App.DTOs.AmmoCrates;
 using BG.App.Interfaces;
 using BG.Domain.Interfaces;
 using BG.Domain.Enums;
-using BG.Domain.Entities;
+using BG.Domain.Entities.Inventory;
+using BG.Domain.Entities.Logging;
 using AutoMapper;
 
 namespace BG.App.Services;

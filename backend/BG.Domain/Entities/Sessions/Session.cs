@@ -1,6 +1,6 @@
 using BG.Domain.Enums;
 
-namespace BG.Domain.Entities;
+namespace BG.Domain.Entities.Sessions;
 
 public class Session : BaseEntity
 {

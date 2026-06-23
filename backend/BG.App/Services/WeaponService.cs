@@ -1,7 +1,8 @@
 using AutoMapper;
 using BG.App.DTOs.Weapons;
 using BG.App.Interfaces;
-using BG.Domain.Entities;
+using BG.Domain.Entities.Inventory;
+using BG.Domain.Entities.Logging;
 using BG.Domain.Enums;
 using BG.Domain.Interfaces;
 

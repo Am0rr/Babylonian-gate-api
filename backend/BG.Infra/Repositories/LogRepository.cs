@@ -1,4 +1,4 @@
-using BG.Domain.Entities;
+using BG.Domain.Entities.Logging;
 using BG.Domain.Interfaces;
 using BG.Infra.Persistence;
 using Microsoft.EntityFrameworkCore;
