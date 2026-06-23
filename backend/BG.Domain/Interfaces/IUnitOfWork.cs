@@ -1,13 +1,11 @@
-using BG.Domain.Entities;
-
 namespace BG.Domain.Interfaces;
 
-public interface IUnitOfWork : IDisposable
+public interface IUnitOfWork
 {
     IWeaponRepository Weapons { get; }
     IAmmoRepository Crates { get; }
     ILogRepository Logs { get; }
     ISoldierRepository Soldiers { get; }
 
-    Task<int> CompleteAsync();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

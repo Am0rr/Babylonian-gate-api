@@ -1,11 +1,8 @@
-
-using BG.Infra.Repositories;
 using BG.Domain.Interfaces;
-using BG.Domain.Entities;
 
 namespace BG.Infra.Persistence;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork, IAsyncDisposable
 {
     private readonly BabylonianDbContext _context;
 
@@ -14,23 +11,28 @@ public class UnitOfWork : IUnitOfWork
     public ILogRepository Logs { get; private set; }
     public ISoldierRepository Soldiers { get; private set; }
 
-    public UnitOfWork(BabylonianDbContext context)
+    public UnitOfWork(BabylonianDbContext context,
+    IWeaponRepository weaponRepository,
+    IAmmoRepository ammoRepository,
+    ILogRepository logRepository,
+    ISoldierRepository soldierRepository)
     {
         _context = context;
 
-        Weapons = new WeaponRepository(_context);
-        Crates = new AmmoRepository(_context);
-        Logs = new LogRepository(_context);
-        Soldiers = new SoldierRepository(_context);
+        Weapons = weaponRepository;
+        Crates = ammoRepository;
+        Logs = logRepository;
+        Soldiers = soldierRepository;
     }
 
-    public async Task<int> CompleteAsync()
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
-        return await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _context.Dispose();
+        await _context.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }
