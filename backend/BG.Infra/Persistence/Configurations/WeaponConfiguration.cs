@@ -23,5 +23,10 @@ public class WeaponConfiguration : IEntityTypeConfiguration<Weapon>
 
         builder.HasIndex(w => w.SerialNumber).IsUnique();
         builder.HasIndex(w => w.IssuedToSoldierId);
+
+        builder.HasOne<Soldier>()
+            .WithMany()
+            .HasForeignKey(w => w.IssuedToSoldierId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

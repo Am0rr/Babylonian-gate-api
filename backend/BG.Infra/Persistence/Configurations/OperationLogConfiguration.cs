@@ -18,8 +18,8 @@ public class OperationLogConfiguration : IEntityTypeConfiguration<OperationLog>
         builder.Property(l => l.RelatedEntityId).IsRequired(false);
         builder.Property(l => l.OperatorId).IsRequired(false);
 
-        builder.HasIndex(l => l.RelatedEntityId);
-        builder.HasIndex(l => l.CreatedAt);
         builder.HasIndex(l => l.OperatorId);
+
+        builder.HasIndex(l => new { l.RelatedEntityId, l.CreatedAt });
     }
 }
