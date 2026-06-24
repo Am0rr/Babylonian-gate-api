@@ -6,6 +6,7 @@ public class SessionItem : BaseEntity
     public Guid WeaponId { get; private set; }
     public Guid? AmmoCrateId { get; private set; }
     public int RoundsFired { get; private set; }
+    public Session Session { get; private set; } = null!;
 
     protected SessionItem() { }
 

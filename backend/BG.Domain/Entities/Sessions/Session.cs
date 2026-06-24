@@ -1,3 +1,4 @@
+using BG.Domain.Entities.Identity;
 using BG.Domain.Enums;
 
 namespace BG.Domain.Entities.Sessions;
@@ -40,7 +41,7 @@ public class Session : BaseEntity
         EndedAt = DateTime.UtcNow;
     }
 
-    public void Cancell()
+    public void Cancel()
     {
         if (Status != SessionStatus.Active)
             throw new InvalidOperationException($"Cannot cancel session with status {Status}.");
