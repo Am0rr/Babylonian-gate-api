@@ -20,14 +20,8 @@ public class WeaponConfiguration : IEntityTypeConfiguration<Weapon>
         builder.Property(w => w.Type).IsRequired().HasConversion<string>().HasMaxLength(50);
         builder.Property(w => w.Condition).IsRequired();
         builder.Property(w => w.Status).IsRequired().HasConversion<string>().HasMaxLength(20);
-        builder.Property(w => w.IssuedToSoldierId).IsRequired(false);
+        builder.Property(w => w.IssuedToUserId).IsRequired(false);
 
         builder.HasIndex(w => w.SerialNumber).IsUnique();
-        builder.HasIndex(w => w.IssuedToSoldierId);
-
-        builder.HasOne<User>()
-            .WithMany()
-            .HasForeignKey(w => w.IssuedToSoldierId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

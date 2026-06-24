@@ -10,7 +10,7 @@ public class Weapon : BaseEntity
     public WeaponType Type { get; private set; }
     public double Condition { get; private set; }
     public WeaponStatus Status { get; private set; }
-    public Guid? IssuedToSoldierId { get; private set; }
+    public Guid? IssuedToUserId { get; private set; }
 
     protected Weapon() { }
 
@@ -42,7 +42,7 @@ public class Weapon : BaseEntity
     public void ChangeCaliber(string newCaliber) => Caliber = newCaliber;
     public void ChangeType(WeaponType newType) => Type = newType;
 
-    public void IssueTo(Guid soldierId)
+    public void IssueTo(Guid userId)
     {
         if (Status != WeaponStatus.InStorage)
             throw new InvalidOperationException("Weapon is not in storage.");
@@ -51,7 +51,7 @@ public class Weapon : BaseEntity
             throw new InvalidOperationException("Cannot issue broken weapon.");
 
         Status = WeaponStatus.Deployed;
-        IssuedToSoldierId = soldierId;
+        IssuedToUserId = userId;
     }
 
     public void ReturnToStorage()
@@ -64,7 +64,7 @@ public class Weapon : BaseEntity
         }
 
         Status = WeaponStatus.InStorage;
-        IssuedToSoldierId = null;
+        IssuedToUserId = null;
     }
 
     public void MarkAsMissing() => Status = WeaponStatus.Missing;
@@ -78,6 +78,6 @@ public class Weapon : BaseEntity
             throw new InvalidOperationException("Cannot repair missing weapon.");
 
         Status = WeaponStatus.Maintenance;
-        IssuedToSoldierId = null;
+        IssuedToUserId = null;
     }
 }
