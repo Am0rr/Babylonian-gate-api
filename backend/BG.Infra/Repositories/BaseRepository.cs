@@ -7,7 +7,7 @@ namespace BG.Infra.Repositories;
 
 public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 {
-    private readonly DbSet<T> _dbSet;
+    protected readonly DbSet<T> _dbSet;
 
     public BaseRepository(BabylonianDbContext context)
     {
